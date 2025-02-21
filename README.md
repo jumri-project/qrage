@@ -3,6 +3,36 @@
 This repository provides a Pulseq implementation of the QRAGE MRI sequence, as described in our publication:  
 ["QRAGE—Simultaneous multiparametric quantitative MRI of water content, T1, T2*, and magnetic susceptibility at ultrahigh field strength"](https://onlinelibrary.wiley.com/doi/10.1002/mrm.30272).
 
+# How to Use This Repository
+
+Follow these steps to set up and use QRAGE:
+
+1. **Clone the QRAGE Repository**
+
+   ```bash
+   git clone https://github.com/inm-4/qrage.git
+   cd qrage
+   ```
+
+2. **Install the Custom PyPulseq**
+
+   QRAGE relies on modifications to PyPulseq that have not yet been merged upstream. You can install the custom PyPulseq in one of two ways:
+
+   - **Option A: Clone and Install Locally**
+
+     ```bash
+     git clone https://github.com/inm-4/pypulseq.git
+     cd pypulseq
+     git checkout develop
+     pip install -e .
+     ```
+
+   - **Option B: Install Directly via pip**
+
+     ```bash
+     pip install git+https://github.com/inm-4/pypulseq.git@devel
+     ```
+
 ## Differences from the Published Implementation
 
 While we have worked diligently to replicate the QRAGE sequence originally developed in the SIEMENS IDEA framework, there are some minor differences between this implementation and the one used in the publication. For instance, the repetition time, inversion time, and echo times differ slightly. However, our comparisons indicate that these variations do not have a significant impact on image quality or the accuracy of the parameter maps.
