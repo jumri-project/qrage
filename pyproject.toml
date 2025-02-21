@@ -25,3 +25,8 @@ Issues = "https://github.com/inm-4/qrage/issues"
 
 [tool.setuptools]
 include-package-data = true
+
+[tool.ruff]
+line-length = 88
+lint.select = ["E", "F", "W", "I", "B", "E501"]
+lint.ignore = []

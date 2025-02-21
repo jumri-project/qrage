@@ -1,5 +1,5 @@
 from types import SimpleNamespace
-from typing import Tuple
+from typing import Tuple, Union
 
 import numpy as np
 import pypulseq as pp
@@ -12,60 +12,66 @@ from .sampling import PartitionSampling
 
 class QRAGE:
     """
-    A class implementing the QRAGE sequence which combines inversion and readout kernels
-    with partition sampling for MRI acquisition.
+    A class implementing the QRAGE sequence which combines inversion and
+    readout kernels with partition sampling for MRI acquisition.
 
-    The QRAGE sequence involves running an inversion pulse followed by a series of readout blocks
-    across multiple sets and partitions.
+    The QRAGE sequence involves running an inversion pulse followed by a series
+    of readout blocks across multiple sets and partitions.
     """
 
     def __init__(
         self,
-        system: Opts,
         fov: Tuple[int, int, int],
         matrix_size: Tuple[int, int, int],
         axes: SimpleNamespace,
-        readout_bandwidth: float,
+        readout_bandwidth: float = 390.625,
         num_spokes: int = 8,
         num_sets: int = 19,
         num_echoes: int = 9,
         num_partitions_per_block: int = 16,
         num_autocalibration_lines: int = 32,
         acceleration_factor: int = 2,
-        adiabatic_pulse_type: str = "hypsec",
+        adiabatic_pulse_type: str = "hypsec_n",
         adiabatic_pulse_order: float = 4.0,
         adiabatic_pulse_overdrive: str = 2.0,
         debug: bool = False,
+        system: Union[Opts, None] = None,
     ) -> None:
         """
         Initialize the QRAGE class.
 
         Parameters:
         ----------
-        system : Opts
-            MRI system options including gradient and RF limits.
-        fov : tuple of int
-            Field of view in millimeters for x, y, and z.
-        matrix_size : tuple of int
-            Matrix size (resolution) for x, y, and z.
+        fov : Tuple[int, int, int]
+            Field of view in millimeters (x, y, z).
+        matrix_size : Tuple[int, int, int]
+            Matrix size (x, y, z).
         axes : SimpleNamespace
             Axis mapping for the encoding directions.
         readout_bandwidth : float
             The readout bandwidth in kHz.
-        num_spokes : int, optional
-            The number of spokes per acquisition (default is 8).
-        num_sets : int, optional
-            The number of sets in the acquisition (default is 19).
-        num_echoes : int, optional
-            The number of echoes per acquisition (default is 9).
-        num_partitions_per_block : int, optional
-            The number of partitions to sample per block (default is 16).
-        num_autocalibration_lines : int, optional
-            The number of autocalibration lines (default is 32).
-        acceleration_factor : int, optional
-            The acceleration factor for partition sampling (default is 2).
-        debug : bool, optional
-            If True, enables debug mode (default is False).
+        num_spokes : int
+            The number of spokes per acquisition.
+        num_sets : int
+            The number of sets in the acquisition.
+        num_echoes : int
+            The number of echoes per acquisition.
+        num_partitions_per_block : int
+            The number of partitions to sample per block.
+        num_autocalibration_lines : int
+            The number of autocalibration lines.
+        acceleration_factor : int
+            The acceleration factor for partition sampling.
+        adiabatic_pulse_type : str
+            Type of adiabatic pulse to use.
+        adiabatic_pulse_order : float
+            Order of the hyperbolic secant pulse.
+        adiabatic_pulse_overdrive : float
+            Overdrive factor.
+        debug : bool
+            If True, enables debug mode.
+        system : Opts, default=Opts()
+            System limits.
         """
         self.sampling = PartitionSampling(
             matrix_size[axes.n3],
@@ -74,16 +80,15 @@ class QRAGE:
             acceleration_factor,
         )
         self.inversion_kernel = InversionKernel(
-            system,
             fov,
             matrix_size,
             axes,
             adiabatic_pulse_type=adiabatic_pulse_type,
             adiabatic_pulse_order=adiabatic_pulse_order,
             adiabatic_pulse_overdrive=adiabatic_pulse_overdrive,
+            system=system,
         )
         self.readout_kernel = ReadoutKernel(
-            system,
             fov,
             matrix_size,
             axes,
@@ -91,6 +96,7 @@ class QRAGE:
             num_sets=num_sets,
             num_echoes=num_echoes,
             debug=debug,
+            system=system,
         )
 
         self.num_spokes = num_spokes
@@ -114,12 +120,13 @@ class QRAGE:
         seq: Sequence,
     ) -> None:
         """
-        Runs the QRAGE sequence by executing the inversion and readout kernels for each partition.
+        Runs the QRAGE sequence by executing the inversion and readout kernels
+        for each partition.
 
         Parameters:
         ----------
         seq : Sequence
-            The pypulseq Sequence object to which the blocks will be added.
+            Sequence object.
         """
         self.inversion_kernel.prep(seq)
         self.readout_kernel.prep(seq)
@@ -155,7 +162,7 @@ class QRAGE:
         Parameters:
         ----------
         seq : Sequence
-            The pypulseq Sequence object from which timing information is obtained.
+            Sequence object.
         """
 
         t_excitation, _, _, _, t_inversion, _ = seq.rf_times()

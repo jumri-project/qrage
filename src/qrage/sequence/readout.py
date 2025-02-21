@@ -1,5 +1,5 @@
 from types import SimpleNamespace
-from typing import Tuple
+from typing import Tuple, Union
 
 import numpy as np
 import pypulseq as pp
@@ -11,12 +11,12 @@ from .sampling import AngularTrajectory
 
 class ReadoutKernel:
     """
-    A class representing the readout kernel for MRI acquisition, including RF pulses and gradient spoilers.
+    A class representing the readout kernel for MRI acquisition, including
+    RF pulses, multiple gradient echoes and gradient spoilers.
     """
 
     def __init__(
         self,
-        system: Opts,
         fov: Tuple[int, int, int],
         matrix_size: Tuple[int, int, int],
         axes: SimpleNamespace,
@@ -37,38 +37,39 @@ class ReadoutKernel:
         readout_spoiling: float = 2.0,
         # readout_spoiling: float = 1.5,
         debug: bool = False,
+        system: Union[Opts, None] = None,
     ) -> None:
         """
         Initialize the ReadoutKernel.
 
         Parameters:
         ----------
-        system : Opts
-            MRI system options including gradient and RF limits.
-        fov : tuple of int
-            Field of view in millimeters for x, y, and z.
-        matrix_size : tuple of int
-            Matrix size (resolution) for x, y, and z.
+        fov : Tuple[int, int, int]
+            Field of view in millimeters (x, y, z).
+        matrix_size : Tuple[int, int, int]
+            Matrix size (x, y, z).
         axes : SimpleNamespace
-            Axis mappings.
-        num_sets : int, optional
-            The number of sets (default is 19).
-        num_echoes : int, optional
-            The number of echoes per set (default is 9).
-        rf_pulse_deg : float, optional
-            Flip angle in degrees (default is 7.0).
-        rf_pulse_duration : float, optional
-            RF pulse duration in seconds (default is 100 µs).
-        rf_spoiling_increment : float, optional
-            RF spoiling increment in degrees (default is 117.0).
-        readout_bandwidth : float, optional
-            Readout bandwidth in kHz (default is 340.0).
-        readout_oversampling : float, optional
-            Oversampling factor (default is 1.0).
-        readout_spoiling : float, optional
-            Spoiling factor (default is 3.0).
-        debug : bool, optional
-            If True, enables debug mode (default is False).
+            Axis mapping for the encoding directions.
+        num_sets : int
+            The number of sets in the acquisition.
+        num_echoes : int
+            The number of echoes per acquisition.
+        rf_pulse_deg : float
+            Flip angle in degrees.
+        rf_pulse_duration : float
+            RF pulse duration in seconds.
+        rf_spoiling_increment : float
+            RF spoiling increment in degrees.
+        readout_bandwidth : float
+            Readout bandwidth in kHz.
+        readout_oversampling : float
+            Oversampling factor.
+        readout_spoiling : floatl
+            Spoiling factor.
+        debug : bool
+            If True, enables debug mode.
+        system : Opts, default=Opts()
+            System limits.
         """
         voxel_size = np.array(fov) / np.array(matrix_size)
 
@@ -286,7 +287,8 @@ class ReadoutKernel:
 
     def prep(self, seq: Sequence) -> None:
         """
-        Prepares the kernel by registering the RF and gradient events with the sequence.
+        Prepares the kernel by registering the RF and gradient events with the
+        sequence.
 
         Parameters:
         ----------
@@ -315,12 +317,13 @@ class ReadoutKernel:
         self, seq: Sequence, index_phase: int, index_partition: int, index_set: int
     ) -> None:
         """
-        Executes the readout kernel by adding the RF pulses and gradient blocks to the sequence.
+        Executes the readout kernel by adding the RF pulses and gradient blocks
+        to the sequence.
 
         Parameters:
         ----------
         seq : Sequence
-            The pypulseq Sequence object for adding blocks.
+            Sequence object.
         index_phase : int
             The phase encoding index.
         index_partition : int

@@ -1,5 +1,5 @@
 from types import SimpleNamespace
-from typing import Tuple
+from typing import Tuple, Union
 
 import numpy as np
 import pypulseq as pp
@@ -15,31 +15,48 @@ class InversionKernel:
 
     def __init__(
         self,
-        system: Opts,
         fov: Tuple[int, int, int],
         matrix_size: Tuple[int, int, int],
         axes: SimpleNamespace,
         adiabatic_pulse_type: str = "hypsec_n",
-        adiabatic_pulse_beta: float = 400,
+        adiabatic_pulse_beta: float = 400.0,
         adiabatic_pulse_duration: float = 10.24e-3,
         adiabatic_pulse_mu: float = 9.8,
         adiabatic_pulse_order: float = 4.0,
         adiabatic_pulse_overdrive: float = 2.0,
         adiabatic_pulse_dwell: float = 1e-5,
         gradient_spoiler_duration: float = 5e-3,
+        system: Union[Opts, None] = None,
     ) -> None:
         """
         Initializes the InversionKernel class.
 
-        Parameters:
-        - system (Opts): MRI system options, including gradient and RF limits.
-        - fov (Tuple[int, int, int]): Field of view in millimeters (x, y, z).
-        - matrix_size (Tuple[int, int, int]): Matrix size (x, y, z).
-        - axes (SimpleNamespace): Object containing axis names or configurations.
-        - adiabatic_pulse_type (str): Type of adiabatic pulse to use, default is "hypsec".
-        - adiabatic_pulse_duration (float): Duration of the adiabatic pulse in seconds, default is 10.24e-3.
-        - adiabatic_pulse_dwell (float): Pulse dwell time in seconds, default is 1e-5.
-        - gradient_spoiler_duration (float): Duration of the gradient spoiler in seconds, default is 5e-3.
+        Parameters
+        ----------
+        fov : Tuple[int, int, int]
+            Field of view in millimeters (x, y, z).
+        matrix_size : Tuple[int, int, int]
+            Matrix size (x, y, z).
+        axes : SimpleNamespace
+            Axis mapping for the encoding directions.
+        adiabatic_pulse_type : str
+            Type of adiabatic pulse to use.
+        adiabatic_pulse_beta : float
+            AM waveform parameter.
+        adiabatic_pulse_duration : float
+            Duration of the adiabatic pulse in seconds.
+        adiabatic_pulse_mu : float
+            A constant, determines amplitude of frequency sweep.
+        adiabatic_pulse_order : float
+            Order of the hyperbolic secant pulse.
+        adiabatic_pulse_overdrive : float
+            Overdrive factor.
+        adiabatic_pulse_dwell : float
+            Pulse dwell time in seconds.
+        gradient_spoiler_duration : float
+            Duration of the gradient spoiler in seconds.
+        system : Opts, default=Opts()
+            System limits.
         """
 
         # Create an adiabatic inversion pulse
