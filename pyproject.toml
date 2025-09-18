@@ -7,7 +7,7 @@ name = "qrage"
 version = "0.0.1"
 authors = [{ name = "Markus Zimmermann", email = "m.zimmermann@fz-juelich.de" }]
 maintainers = [{ name = "Markus Zimmermann" }]
-description = ""
+description = "Quantitative Rapid Gradient-Echo Sequence"
 readme = "README.md"
 license = { file = "LICENSE" }
 requires-python = ">=3.12"

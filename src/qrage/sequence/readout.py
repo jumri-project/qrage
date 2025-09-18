@@ -20,8 +20,8 @@ class ReadoutKernel:
         fov: Tuple[int, int, int],
         matrix_size: Tuple[int, int, int],
         axes: SimpleNamespace,
-        num_sets: int = 19,
-        num_echoes: int = 9,
+        num_sets: int = 1,
+        num_echoes: int = 1,
         rf_pulse_deg: float = 5.0,
         # rf_pulse_duration: float = 100e-6,
         rf_pulse_duration: float = 2e-3,
@@ -285,7 +285,10 @@ class ReadoutKernel:
         # # Time before the readout process starts
         # self.pre_time = self.rf.delay + pp.calc_rf_center(self.rf)[0]
 
-    def prep(self, seq: Sequence) -> None:
+    def prep(
+        self,
+        seq: Sequence,
+    ) -> None:
         """
         Prepares the kernel by registering the RF and gradient events with the
         sequence.
@@ -301,7 +304,10 @@ class ReadoutKernel:
         # Phase of the RF object will change, therefore we only pre-register the shapes
         _, self.rf.shape_IDs = seq.register_rf_event(self.rf)
 
-    def reset(self, seq: Sequence) -> None:
+    def reset(
+        self,
+        seq: Sequence,
+    ) -> None:
         """
         Resets the RF spoiling phase and increment.
 
@@ -314,7 +320,11 @@ class ReadoutKernel:
         self.rf_phase = 0
 
     def run(
-        self, seq: Sequence, index_phase: int, index_partition: int, index_set: int
+        self,
+        seq: Sequence,
+        index_phase: int,
+        index_partition: int,
+        index_set: int,
     ) -> None:
         """
         Executes the readout kernel by adding the RF pulses and gradient blocks
