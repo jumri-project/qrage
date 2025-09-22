@@ -10,7 +10,7 @@ Follow these steps to set up and use QRAGE:
 1. **Clone the QRAGE Repository**
 
    ```bash
-   git clone https://github.com/jumri/qrage.git
+   git clone https://github.com/jumri-project/qrage.git
    cd qrage
    ```
 
@@ -21,7 +21,7 @@ Follow these steps to set up and use QRAGE:
    - **Option A: Clone and Install Locally**
 
      ```bash
-     git clone https://github.com/jumri/pypulseq.git
+     git clone https://github.com/jumri-project/pypulseq.git
      cd pypulseq
      git checkout develop
      pip install -e .
@@ -30,7 +30,7 @@ Follow these steps to set up and use QRAGE:
    - **Option B: Install Directly via pip**
 
      ```bash
-     pip install git+https://github.com/jumri/pypulseq.git@devel
+     pip install git+https://github.com/jumri-project/pypulseq.git@devel
      ```
 
 This repository uses Jupyter notebooks as examples.
