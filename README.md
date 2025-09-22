@@ -33,6 +33,15 @@ Follow these steps to set up and use QRAGE:
      pip install git+https://github.com/inm-4/pypulseq.git@devel
      ```
 
+This repository uses Jupyter notebooks as examples.
+
+**Note:** Git doesn’t handle diffing and merging notebooks very well by default. To improve this, you can configure git to use [nbdime](https://nbdime.readthedocs.io/en/latest/). Run the following command to enable nbdime globally:
+
+> ```bash
+> nbdime config-git --enable --global
+> ```
+> For more details, see the [nbdime git integration quickstart](https://nbdime.readthedocs.io/en/latest/#git-integration-quickstart).
+
 ## Differences from the Published Implementation
 
 While we have worked diligently to replicate the QRAGE sequence originally developed in the SIEMENS IDEA framework, there are some minor differences between this implementation and the one used in the publication. For instance, the repetition time, inversion time, and echo times differ slightly. However, our comparisons indicate that these variations do not have a significant impact on image quality or the accuracy of the parameter maps.
